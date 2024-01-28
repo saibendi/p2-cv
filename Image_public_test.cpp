@@ -41,7 +41,10 @@ TEST(test_image_from_and_to_stream) {
   // A very poorly behaved input PPM.
   string input = "P3 2 2\t255 255 0 0\n0\n255 0 \n0 0 255 255 255 255 \n";
   std::istringstream ss_input(input);
+    std::cout << "CHECKPT 1" << std::endl;
   Image_init(img, ss_input);
+    std::cout << "CHECKPT 2" << std::endl;
+
 
   // Should be well behaved when you print it though!
   string output_correct = "P3\n2 2\n255\n255 0 0 0 255 0 \n0 0 255 255 255 255 \n";

@@ -63,13 +63,15 @@ int Matrix_height(const Matrix* mat) {
     return mat->height;
 }
 
+// ----------------------------------------------------------------------------------------------------------------
+
 // REQUIRES: mat points to a valid Matrix
 //           ptr points to an element in the Matrix
 // EFFECTS:  Returns the row of the element pointed to by ptr.
 int Matrix_row(const Matrix* mat, const int* ptr) {
     // assert() : check if mat points to valid Matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
     
     // assert() : check if ptr points to an element in the Matrix
     
@@ -77,7 +79,7 @@ int Matrix_row(const Matrix* mat, const int* ptr) {
     const int *firstElemPtr = mat->data;
     
     int ptr_difference = ptr - firstElemPtr;
-    row = (ptr_difference / mat->width);
+    row = (ptr_difference / Matrix_width(mat));
         
     return row;
 }
@@ -87,19 +89,21 @@ int Matrix_row(const Matrix* mat, const int* ptr) {
 // EFFECTS:  Returns the column of the element pointed to by ptr.
 int Matrix_column(const Matrix* mat, const int* ptr) {
     // assert() : check if mat points to valid Matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
-    
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
+
     // assert() : check if ptr points to an element in the Matrix??
     
     int col = 0;
     const int *firstElemPtr = mat->data;
     
     int ptr_difference = ptr - firstElemPtr;
-    col = (ptr_difference % mat->width);
+    col = (ptr_difference % Matrix_width(mat));
     
     return col;
 }
+
+// ----------------------------------------------------------------------------------------------------------------
 
 // REQUIRES: mat points to a valid Matrix
 //           0 <= row && row < Matrix_height(mat)
@@ -111,13 +115,13 @@ int Matrix_column(const Matrix* mat, const int* ptr) {
 //           at the given row and column.
 int* Matrix_at(Matrix* mat, int row, int column) {
     // assert() : check if mat points to a valid matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
 
-    assert(0 <= row && row < mat->height);
-    assert(0 <= column && column < mat->width);
-    
-    int *ptr = &mat->data[(row * mat->width) + column];
+    assert(0 <= column && column < Matrix_width(mat));
+    assert(0 <= row && row < Matrix_height(mat));
+
+    int *ptr = &mat->data[(row * Matrix_width(mat)) + column];
     
     return ptr;
 }
@@ -130,13 +134,13 @@ int* Matrix_at(Matrix* mat, int row, int column) {
 //           the Matrix at the given row and column.
 const int* Matrix_at(const Matrix* mat, int row, int column) {
     // assert() : check if mat points to a valid matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
 
-    assert(0 <= row && row < mat->height);
-    assert(0 <= column && column < mat->width);
+    assert(0 <= column && column < Matrix_width(mat));
+    assert(0 <= row && row < Matrix_height(mat));
     
-    const int *ptr = &mat->data[(row * mat->width) + column];
+    const int *ptr = &mat->data[(row * Matrix_width(mat)) + column];
     
     return ptr;
 }
@@ -146,10 +150,10 @@ const int* Matrix_at(const Matrix* mat, int row, int column) {
 // EFFECTS:  Sets each element of the Matrix to the given value.
 void Matrix_fill(Matrix* mat, int value) {
     // assert() : check if mat points to a valid matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
 
-    int size = mat->width * mat->height;
+    int size = Matrix_width(mat) * Matrix_height(mat);
     for (int i = 0; i < size; ++i) {
         mat->data[i] = value;
     }
@@ -162,23 +166,23 @@ void Matrix_fill(Matrix* mat, int value) {
 //           row or the first/last column.
 void Matrix_fill_border(Matrix* mat, int value) {
     // assert() : check if mat points to a valid matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
 
-    int totalNum = mat->width * mat->height;
-    int var = (totalNum / mat->width) - 1;
+    int totalNum = Matrix_width(mat) * Matrix_height(mat);
+    int var = (totalNum / Matrix_width(mat)) - 1;
     // first loop: 0th element through mat->width'th element (inclusive)
-    for (int i = 0; i <= mat->width; ++i) {
+    for (int i = 0; i <= Matrix_width(mat); ++i) {
         mat->data[i] = value;
     }
     // second loop: [mat->width * var] + 1 : end element (inclusive)
-    for (int i = ((mat->width*var) + 1); i < totalNum; ++i) {
+    for (int i = ((Matrix_width(mat)*var) + 1); i < totalNum; ++i) {
         mat->data[i] = value;
     }
     // third loop: borders
     for (int i = var; i > 1; --i) {
-        mat->data[(mat->width * i) - 1] = value;
-        mat->data[mat->width * i] = value;
+        mat->data[(Matrix_width(mat) * i) - 1] = value;
+        mat->data[Matrix_width(mat) * i] = value;
     }
 }
 
@@ -186,10 +190,10 @@ void Matrix_fill_border(Matrix* mat, int value) {
 // EFFECTS:  Returns the value of the maximum element in the Matrix
 int Matrix_max(const Matrix* mat) {
     // assert() : check if mat points to a valid matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
 
-    int size = mat->width * mat->height;
+    int size = Matrix_width(mat) * Matrix_height(mat);
     int max = mat->data[0];
     if (size > 1) {
         for (int i = 1; i < size; ++i) {
@@ -214,13 +218,13 @@ int Matrix_max(const Matrix* mat) {
 int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
                                       int column_start, int column_end) {
     // assert() : check if mat points to a valid matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
 
-    assert(0 <= row && row < mat->height);
-    assert(0 <= column_start && column_end <= mat->width && column_start < column_end); // column_end is exclusive
+    assert(0 <= row && row < Matrix_height(mat));
+    assert(0 <= column_start && column_end <= Matrix_width(mat) && column_start < column_end); // column_end is exclusive
     
-    int rowBeginning = (row) * mat->width;
+    int rowBeginning = (row) * Matrix_width(mat);
     int min = mat->data[rowBeginning + column_start];
     int min_col = column_start;
     if (column_end - column_start > 1) {
@@ -243,13 +247,13 @@ int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
 int Matrix_min_value_in_row(const Matrix* mat, int row,
                             int column_start, int column_end) {
     // assert() : check if mat points to a valid matrix
-    assert(0 < mat->width && mat->width <= MAX_MATRIX_WIDTH);
-    assert(0 < mat->height && mat->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Matrix_width(mat) && Matrix_width(mat) <= MAX_MATRIX_WIDTH);
+    assert(0 < Matrix_height(mat) && Matrix_height(mat) <= MAX_MATRIX_HEIGHT);
 
-    assert(0 <= row && row < mat->height);
-    assert(0 <= column_start && column_end <= mat->width && column_start < column_end); // column_end is exclusive
+    assert(0 <= row && row < Matrix_height(mat));
+    assert(0 <= column_start && column_end <= Matrix_width(mat) && column_start < column_end); // column_end is exclusive
     
-    int rowBeginning = (row) * mat->width;
+    int rowBeginning = (row) * Matrix_width(mat);
     int min = mat->data[rowBeginning + column_start];
     if (column_end - column_start > 1) {
         for (int i = column_start + 1; i < column_end; ++i) {

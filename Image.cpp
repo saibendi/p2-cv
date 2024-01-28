@@ -18,6 +18,9 @@ void Image_init(Image* img, int width, int height) {
     
     img->width = width;
     img->height = height;
+    Matrix_init(&img->red_channel, width, height);
+    Matrix_init(&img->green_channel, width, height);
+    Matrix_init(&img->blue_channel, width, height);
 }
 
 // REQUIRES: img points to an Image
@@ -41,10 +44,13 @@ void Image_init(Image* img, std::istream& is) {
     int r;
     int g;
     int b;
-    
-    is >> PPM_type >> width >> height >> maxRGB;
+    is >> PPM_type;
+    is >> width >> height >> maxRGB;
     img->width = width;
     img->height = height;
+    Matrix_init(&img->red_channel, width, height);
+    Matrix_init(&img->green_channel, width, height);
+    Matrix_init(&img->blue_channel, width, height);
     for (int row = 0; row < height; ++row) { // every row
         for (int column = 0; column < width; ++column) { // every column
             is >> r;
@@ -76,14 +82,12 @@ void Image_print(const Image* img, std::ostream& os) {
     assert(0 < img->height && img->height <= MAX_MATRIX_HEIGHT);
     
     string PPM_type = "P3";
-    int maxRGB = 255;
     
     os << PPM_type << endl;
-    //os << Image_width(&img) << " " << Image_height(&img) << endl;
     os << img->width << " " << img->height << endl;
-    os << maxRGB << endl;
+    os << MAX_INTENSITY << endl;
     for (int row = 0; row < img->height; ++row) { // every row
-        for (int column = 0; column < img->width; ++column) { // every column
+        for (int column = 0; column < img->width; ++column) { // at each column
             os << *Matrix_at(&img->red_channel, row, column) << " ";
             os << *Matrix_at(&img->green_channel, row, column) << " ";
             os << *Matrix_at(&img->blue_channel, row, column) << " ";
@@ -118,11 +122,11 @@ int Image_height(const Image* img) {
 // EFFECTS:  Returns the pixel in the Image at the given row and column.
 Pixel Image_get_pixel(const Image* img, int row, int column) {
     // REQUIRES: img points to an Image
-    assert(0 < img->width && img->width <= MAX_MATRIX_WIDTH);
-    assert(0 < img->height && img->height <= MAX_MATRIX_HEIGHT);
+    assert(0 < Image_width(img) && Image_width(img) <= MAX_MATRIX_WIDTH);
+    assert(0 < Image_height(img) && Image_height(img) <= MAX_MATRIX_HEIGHT);
     // REQUIRES: row / column conditions
-    assert(0 <= row && row < img->height);
-    assert(0 <= column && column < img->width);
+    assert(0 <= row && row < Image_height(img));
+    assert(0 <= column && column < Image_width(img));
     
     int r = *Matrix_at(&img->red_channel, row, column);
     int g = *Matrix_at(&img->green_channel, row, column);
@@ -145,6 +149,8 @@ void Image_set_pixel(Image* img, int row, int column, Pixel color) {
     // REQUIRES: row / column conditions
     assert(0 <= row && row < img->height);
     assert(0 <= column && column < img->width);
+    
+    // Matrix_init(mat,width,height);
     
     *Matrix_at(&img->red_channel, row, column) = color.r;
     *Matrix_at(&img->green_channel, row, column) = color.g;
