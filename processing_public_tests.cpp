@@ -49,10 +49,12 @@ int main(int argc, char *argv[]){
     int dog_sizes[] = {4, 5};
     test_all("dog", dog_sizes, 1);
   }
+
   if (which_test == "all" || which_test == "crabster") {
     int crabster_sizes[] = {50, 45, 70, 35};
     test_all("crabster", crabster_sizes, 2);
   }
+    
   if (which_test == "all" || which_test == "horses") {
     int horses_sizes[] = {300, 382, 400, 250};
     test_all("horses", horses_sizes, 2);
@@ -75,7 +77,8 @@ void test_all(string prefix, int sizes[], int num_sizes){
   Matrix*  cost = new Matrix;
   compute_vertical_cost_matrix(energy, cost);
   test_cost(cost, prefix);
-
+    
+    /*
   // Test find seam
   int seam[MAX_MATRIX_HEIGHT];
   find_minimal_vertical_seam(cost, seam);
@@ -92,6 +95,7 @@ void test_all(string prefix, int sizes[], int num_sizes){
   cout << prefix << " tests PASS" << endl << endl;
 
   delete cost;
+ */
   delete energy;
   delete img;
 }

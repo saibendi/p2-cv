@@ -89,9 +89,32 @@ static int squared_difference(Pixel p1, Pixel p2) {
 //           image is computed and written into it.
 //           See the project spec for details on computing the energy matrix.
 void compute_energy_matrix(const Image* img, Matrix* energy) {
+    assert(0 < Image_width(img) && Image_width(img) <= MAX_MATRIX_WIDTH);
+    assert(0 < Image_height(img) && Image_height(img) <= MAX_MATRIX_HEIGHT);
     
-  assert(false); // TODO Replace with your implementation!
-  assert(squared_difference(Pixel(), Pixel())); // TODO delete me, this is here to make it compile
+    Matrix_init(energy, Image_width(img), Image_height(img));   // initializing energy matrix
+    Matrix_fill(energy, 0);     // fill matrix with 0's
+    
+    // defining energy of pixel in question
+    int energy_X = 0;
+    
+    // compute energy matrix
+    for (int row = 1; row < Image_height(img) - 1; ++row) {
+        for (int col = 1; col < Image_width(img) - 1; ++col) {
+            Pixel pixel_N = Image_get_pixel(img, row - 1, col);
+            Pixel pixel_S = Image_get_pixel(img, row + 1, col);
+            Pixel pixel_W = Image_get_pixel(img, row, col - 1);
+            Pixel pixel_E = Image_get_pixel(img, row, col + 1);
+            energy_X = squared_difference(pixel_N, pixel_S) + squared_difference(pixel_W, pixel_E);
+            *Matrix_at(energy, row, col) = energy_X;
+        }
+    }
+    
+    // find maximum energy_X value
+    int energy_MAX = Matrix_max(energy);
+
+    // fill border of energy matrix
+    Matrix_fill_border(energy, energy_MAX);
 }
 
 
@@ -105,7 +128,28 @@ void compute_energy_matrix(const Image* img, Matrix* energy) {
 //           computed and written into it.
 //           See the project spec for details on computing the cost matrix.
 void compute_vertical_cost_matrix(const Matrix* energy, Matrix *cost) {
-  assert(false); // TODO Replace with your implementation!
+    // Initialize the cost Matrix with the same size as the energy Matrix
+    Matrix_init(cost, Matrix_width(energy), Matrix_height(energy));
+    
+    // Fill in costs for the first row (index 0) the same as energy
+    for (int col = 0; col < Matrix_width(energy); ++col) {
+        *Matrix_at(cost, 0, col) = *Matrix_at(energy, 0, col);
+    }
+    
+    //
+    for (int row = 1; row < Matrix_height(energy); ++row) {
+        for (int col = 0; col < Matrix_width(energy); ++col) {
+            if (col == 0) {
+                *Matrix_at(cost, row, col) = *Matrix_at(energy, row, col) + Matrix_min_value_in_row(cost, row - 1, col, col + 2);
+            }
+            else if (col == Matrix_width(energy)-1) {
+                *Matrix_at(cost, row, col) = *Matrix_at(energy, row, col) + Matrix_min_value_in_row(cost, row - 1, col-1, col + 1);
+            }
+            else { // col = 1, 2, 3
+                *Matrix_at(cost, row, col) = *Matrix_at(energy, row, col) + Matrix_min_value_in_row(cost, row - 1, col-1, col + 2);
+            }
+        }
+    }
 }
 
 

@@ -213,7 +213,28 @@ TEST(test_10_matrix_max) {
 }
 
 
+TEST(test_11_matrix_min_value) {
+    Matrix *mat = new Matrix;
+    Matrix_init(mat, 5, 5);
+    int value = 0;
+    for (int row = 0; row < Matrix_height(mat); ++row) {
+        for (int col = 0; col < Matrix_width(mat); ++col) {
+            *Matrix_at(mat, row, col) = value;
+            value = value + 1;
+        }
+    }
+    
+    for (int row = 0; row < Matrix_height(mat); ++row) {
+        for (int col = 0; col < Matrix_width(mat); ++col) {
+            cout << *Matrix_at(mat, row, col) << " ";
+        }
+        cout << endl;
+    }
 
+    ASSERT_EQUAL(Matrix_min_value_in_row(mat, 4, 0, 3),20);
+    
+    
+}
 // ADD YOUR TESTS HERE
 // You are encouraged to use any functions from Matrix_test_helpers.hpp as needed.
 
