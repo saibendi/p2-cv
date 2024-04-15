@@ -213,7 +213,7 @@ TEST(test_10_matrix_max) {
 }
 
 
-TEST(test_11_matrix_min_value) {
+TEST(test_11_matrix_min_value_diffvalues) {
     Matrix *mat = new Matrix;
     Matrix_init(mat, 5, 5);
     int value = 0;
@@ -232,8 +232,71 @@ TEST(test_11_matrix_min_value) {
     }
 
     ASSERT_EQUAL(Matrix_min_value_in_row(mat, 4, 0, 3),20);
+    ASSERT_EQUAL(Matrix_column_of_min_value_in_row(mat, 4, 0, 3),0);
+    delete mat;
+}
+
+TEST(test_11_matrix_min_value_samevalues) {
+    Matrix *mat = new Matrix;
+    Matrix_init(mat, 5, 5);
+    int value = 0;
+    for (int row = 0; row < Matrix_height(mat); ++row) {
+        for (int col = 0; col < Matrix_width(mat); ++col) {
+            *Matrix_at(mat, row, col) = value;
+        }
+        value = value + 1;
+    }
     
+    for (int row = 0; row < Matrix_height(mat); ++row) {
+        for (int col = 0; col < Matrix_width(mat); ++col) {
+            cout << *Matrix_at(mat, row, col) << " ";
+        }
+        cout << endl;
+    }
+
+    ASSERT_EQUAL(Matrix_min_value_in_row(mat, 4, 0, 3),4);
+    ASSERT_EQUAL(Matrix_column_of_min_value_in_row(mat, 4, 0, 3),0);
+    delete mat;
+}
+
+TEST(test_12_matrix_min_value_column) {
+    Matrix *mat = new Matrix;
+    Matrix_init(mat, 5, 5);
+    cout << Matrix_width(mat) << endl;
+    *Matrix_at(mat, 0, 0) = 1470; //0
+    *Matrix_at(mat, 0, 1) = 1470; //1
+    *Matrix_at(mat, 0, 2) = 1470; //2
+    *Matrix_at(mat, 0, 3) = 1470; //3
+    *Matrix_at(mat, 0, 4) = 1470; //4
+    *Matrix_at(mat, 1, 0) = 1470; //5
+    *Matrix_at(mat, 1, 1) = 1148; //6
+    *Matrix_at(mat, 1, 2) = 57;   //7
+    *Matrix_at(mat, 1, 3) = 1148; //8
+    *Matrix_at(mat, 1, 4) = 1470; //9
+    *Matrix_at(mat, 2, 0) = 1470; //10
+    *Matrix_at(mat, 2, 1) = 1470; //11
+    *Matrix_at(mat, 2, 2) = 202;  //12
+    *Matrix_at(mat, 2, 3) = 1470; //13
+    *Matrix_at(mat, 2, 4) = 1470; //14
+    *Matrix_at(mat, 3, 0) = 1470; //15
+    *Matrix_at(mat, 3, 1) = 1464; //16
+    *Matrix_at(mat, 3, 2) = 960;  //17
+    *Matrix_at(mat, 3, 3) = 1464; //18
+    *Matrix_at(mat, 3, 4) = 1470; //19
+    *Matrix_at(mat, 4, 0) = 1470; //20
+    *Matrix_at(mat, 4, 1) = 1470; //21
+    *Matrix_at(mat, 4, 2) = 1470; //22
+    *Matrix_at(mat, 4, 3) = 1470; //23
+    *Matrix_at(mat, 4, 4) = 1470; //24
+
     
+    ASSERT_EQUAL(Matrix_column_of_min_value_in_row(mat, 4, 0, 5), 0);
+    ASSERT_EQUAL(Matrix_column_of_min_value_in_row(mat, 3, 0, 5), 2);
+    ASSERT_EQUAL(Matrix_column_of_min_value_in_row(mat, 2, 0, 5), 2);
+    ASSERT_EQUAL(Matrix_column_of_min_value_in_row(mat, 1, 0, 5), 2);
+    ASSERT_EQUAL(Matrix_column_of_min_value_in_row(mat, 0, 0, 5), 0);
+
+    delete mat;
 }
 // ADD YOUR TESTS HERE
 // You are encouraged to use any functions from Matrix_test_helpers.hpp as needed.

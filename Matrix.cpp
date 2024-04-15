@@ -224,13 +224,14 @@ int Matrix_column_of_min_value_in_row(const Matrix* mat, int row,
     assert(0 <= row && row < Matrix_height(mat));
     assert(0 <= column_start && column_end <= Matrix_width(mat) && column_start < column_end); // column_end is exclusive
     
-    int rowBeginning = (row) * Matrix_width(mat);
+    int rowBeginning = (row) * Matrix_width(mat); //15
     int min = mat->data[rowBeginning + column_start];
     int min_col = column_start;
     if (column_end - column_start > 1) {
         for (int i = column_start + 1; i < column_end; ++i) {
             if (mat->data[rowBeginning + i] < min) {
                 min_col = i;
+                min = mat->data[rowBeginning + i];
             }
         }
     }

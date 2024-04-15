@@ -78,7 +78,7 @@ void test_all(string prefix, int sizes[], int num_sizes){
   compute_vertical_cost_matrix(energy, cost);
   test_cost(cost, prefix);
     
-    /*
+
   // Test find seam
   int seam[MAX_MATRIX_HEIGHT];
   find_minimal_vertical_seam(cost, seam);
@@ -95,7 +95,6 @@ void test_all(string prefix, int sizes[], int num_sizes){
   cout << prefix << " tests PASS" << endl << endl;
 
   delete cost;
- */
   delete energy;
   delete img;
 }
